@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>noVNC Remote Desktop Client</title>
+    <meta name="description" content="Secure web-based VNC client for remote desktop access">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #1a1a25;
+            --bg-input: #252535;
+            --accent-primary: #6366f1;
+            --accent-secondary: #818cf8;
+            --accent-glow: rgba(99, 102, 241, 0.4);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border-color: #2d2d3d;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(129, 140, 248, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(99, 102, 241, 0.05) 0%, transparent 70%);
+            z-index: -1;
+            animation: pulse 8s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        /* Header */
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .logo-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px var(--accent-glow);
+        }
+
+        .logo-icon svg {
+            width: 32px;
+            height: 32px;
+            fill: white;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--text-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Main Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .card-title svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--accent-primary);
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1rem;
+        }
+
+        .connect-btn {
+            width: 100%;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .connect-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 20px var(--accent-glow);
+        }
+
+        .connect-btn:active {
+            transform: scale(0.98);
+        }
+
+        .connect-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: white;
+        }
+
+        /* Alert */
+        .alert {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .alert-title {
+            font-weight: 600;
+            color: var(--warning);
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .alert-title svg {
+            width: 16px;
+            height: 16px;
+            fill: var(--warning);
+        }
+
+        .alert p {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Guide */
+        .guide-list {
+            list-style: none;
+        }
+
+        .guide-list li {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+
+        .guide-list li:last-child {
+            border-bottom: none;
+        }
+
+        .step-number {
+            width: 24px;
+            height: 24px;
+            background: var(--bg-input);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--accent-primary);
+            flex-shrink: 0;
+        }
+
+        .guide-list li span {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Troubleshooting */
+        .troubleshoot {
+            margin-top: 2rem;
+        }
+
+        .troubleshoot-item {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .troubleshoot-item strong {
+            color: var(--text-primary);
+            font-size: 0.875rem;
+        }
+
+        .troubleshoot-item p {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 3rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        footer a {
+            color: var(--accent-secondary);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Security Badge */
+        .security-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 20px;
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            color: var(--success);
+            margin-top: 1rem;
+        }
+
+        .security-badge svg {
+            width: 14px;
+            height: 14px;
+            fill: var(--success);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21 2H3a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h7v2H7v2h10v-2h-3v-2h7a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1zM4 4h16v12H4V4z"/>
+                    </svg>
+                </div>
+                <h1>noVNC Remote Desktop</h1>
+            </div>
+            <p class="subtitle">Secure, encrypted web-based remote desktop access</p>
+            <div class="security-badge">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-1 6h2v2h-2V7zm0 4h2v6h-2v-6z"/>
+                </svg>
+                SSL/TLS Encrypted Connection
+            </div>
+        </header>
+
+        <div class="main-grid">
+            <div class="card">
+                <h2 class="card-title">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M15 7.5V2H9v5.5l3 3 3-3zM7.5 9H2v6h5.5l3-3-3-3zM9 16.5V22h6v-5.5l-3-3-3 3zM16.5 9l-3 3 3 3H22V9h-5.5z"/>
+                    </svg>
+                    Connect to Desktop
+                </h2>
+
+                <form id="connectForm">
+                    <div class="form-group">
+                        <div class="input-row">
+                            <div>
+                                <label for="host">Server Address</label>
+                                <input type="text" id="host" placeholder="192.168.0.53 or hostname" required>
+                            </div>
+                            <div>
+                                <label for="port">Port</label>
+                                <input type="number" id="port" value="6443" placeholder="6443" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="connect-btn">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                        Connect to Desktop
+                    </button>
+                </form>
+
+                <div class="alert">
+                    <div class="alert-title">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+                        </svg>
+                        Self-Signed Certificate Notice
+                    </div>
+                    <p>Your browser will show a security warning. This is expected for self-signed certificates. Click "Advanced" → "Proceed" to continue.</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                    </svg>
+                    Quick Guide
+                </h2>
+
+                <ol class="guide-list">
+                    <li>
+                        <span class="step-number">1</span>
+                        <span>Enter your server's IP address or hostname</span>
+                    </li>
+                    <li>
+                        <span class="step-number">2</span>
+                        <span>Keep the default port (6443) unless configured otherwise</span>
+                    </li>
+                    <li>
+                        <span class="step-number">3</span>
+                        <span>Click "Connect to Desktop" to launch the VNC viewer</span>
+                    </li>
+                    <li>
+                        <span class="step-number">4</span>
+                        <span>Accept the certificate warning (first time only)</span>
+                    </li>
+                    <li>
+                        <span class="step-number">5</span>
+                        <span>Enter your VNC password when prompted</span>
+                    </li>
+                </ol>
+
+                <div class="troubleshoot">
+                    <h3 style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.75rem;">Troubleshooting</h3>
+                    
+                    <div class="troubleshoot-item">
+                        <strong>Connection refused?</strong>
+                        <p>Ensure the noVNC service is running and port 6443 is open</p>
+                    </div>
+                    
+                    <div class="troubleshoot-item">
+                        <strong>Certificate error?</strong>
+                        <p>First visit https://[server]:6443 directly to accept the cert</p>
+                    </div>
+                    
+                    <div class="troubleshoot-item">
+                        <strong>Black screen?</strong>
+                        <p>The desktop environment may need a moment to start</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Powered by <a href="https://novnc.com" target="_blank">noVNC</a> • 
+            <a href="docs/SECURITY.md">Security Documentation</a> • 
+            <a href="docs/PORT_FORWARDING.md">Router Setup</a></p>
+        </footer>
+    </div>
+
+    <script>
+        document.getElementById('connectForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const host = document.getElementById('host').value.trim();
+            const port = document.getElementById('port').value.trim();
+            
+            if (!host) {
+                alert('Please enter a server address');
+                return;
+            }
+            
+            // Construct the noVNC URL
+            const vncUrl = `app/vnc.html?host=${encodeURIComponent(host)}&port=${encodeURIComponent(port)}&autoconnect=true&encrypt=true`;
+            
+            // First, try to open the certificate acceptance page
+            const certWindow = window.open(`https://${host}:${port}`, '_blank');
+            
+            // After a delay, navigate to VNC
+            setTimeout(() => {
+                window.location.href = vncUrl;
+            }, 1000);
+        });
+
+        // Check if coming back from cert acceptance
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('host')) {
+            document.getElementById('host').value = urlParams.get('host');
+        }
+        if (urlParams.get('port')) {
+            document.getElementById('port').value = urlParams.get('port');
+        }
+    </script>
+</body>
+</html>

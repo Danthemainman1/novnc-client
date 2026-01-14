@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -54,7 +55,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: 
+            background:
                 radial-gradient(ellipse at 20% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
                 radial-gradient(ellipse at 80% 80%, rgba(129, 140, 248, 0.1) 0%, transparent 50%),
                 radial-gradient(ellipse at 50% 50%, rgba(99, 102, 241, 0.05) 0%, transparent 70%);
@@ -63,8 +64,15 @@
         }
 
         @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.7;
+            }
         }
 
         .container {
@@ -364,13 +372,15 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <header>
             <div class="logo">
                 <div class="logo-icon">
                     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M21 2H3a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h7v2H7v2h10v-2h-3v-2h7a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1zM4 4h16v12H4V4z"/>
+                        <path
+                            d="M21 2H3a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h7v2H7v2h10v-2h-3v-2h7a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1zM4 4h16v12H4V4z" />
                     </svg>
                 </div>
                 <h1>noVNC Remote Desktop</h1>
@@ -378,7 +388,8 @@
             <p class="subtitle">Secure, encrypted web-based remote desktop access</p>
             <div class="security-badge">
                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-1 6h2v2h-2V7zm0 4h2v6h-2v-6z"/>
+                    <path
+                        d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-1 6h2v2h-2V7zm0 4h2v6h-2v-6z" />
                 </svg>
                 SSL/TLS Encrypted Connection
             </div>
@@ -388,7 +399,8 @@
             <div class="card">
                 <h2 class="card-title">
                     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M15 7.5V2H9v5.5l3 3 3-3zM7.5 9H2v6h5.5l3-3-3-3zM9 16.5V22h6v-5.5l-3-3-3 3zM16.5 9l-3 3 3 3H22V9h-5.5z"/>
+                        <path
+                            d="M15 7.5V2H9v5.5l3 3 3-3zM7.5 9H2v6h5.5l3-3-3-3zM9 16.5V22h6v-5.5l-3-3-3 3zM16.5 9l-3 3 3 3H22V9h-5.5z" />
                     </svg>
                     Connect to Desktop
                 </h2>
@@ -409,7 +421,7 @@
 
                     <button type="submit" class="connect-btn">
                         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M8 5v14l11-7z"/>
+                            <path d="M8 5v14l11-7z" />
                         </svg>
                         Connect to Desktop
                     </button>
@@ -418,18 +430,42 @@
                 <div class="alert">
                     <div class="alert-title">
                         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+                            <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
                         </svg>
                         Self-Signed Certificate Notice
                     </div>
-                    <p>Your browser will show a security warning. This is expected for self-signed certificates. Click "Advanced" → "Proceed" to continue.</p>
+                    <p>Your browser will show a security warning. This is expected for self-signed certificates. Click
+                        "Advanced" → "Proceed" to continue.</p>
+                </div>
+
+                <!-- Audio Streaming Section -->
+                <div
+                    style="margin-top: 1.5rem; padding: 1rem; background: var(--bg-secondary); border-radius: 12px; border: 1px solid var(--border-color);">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="var(--accent-primary)">
+                            <path
+                                d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" />
+                        </svg>
+                        <span style="font-weight: 600; color: var(--text-primary);">Audio Streaming</span>
+                    </div>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.75rem;">Enable audio
+                        from your remote desktop (port 6444)</p>
+                    <button id="audioBtn" onclick="toggleAudio()"
+                        style="width: 100%; padding: 0.75rem; background: var(--bg-input); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-primary); font-family: inherit; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.2s;">
+                        <svg id="audioIcon" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                            <path d="M8 5v14l11-7z" />
+                        </svg>
+                        <span id="audioText">Start Audio</span>
+                    </button>
+                    <audio id="audioPlayer" style="display: none;"></audio>
                 </div>
             </div>
 
             <div class="card">
                 <h2 class="card-title">
                     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                        <path
+                            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z" />
                     </svg>
                     Quick Guide
                 </h2>
@@ -458,18 +494,19 @@
                 </ol>
 
                 <div class="troubleshoot">
-                    <h3 style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.75rem;">Troubleshooting</h3>
-                    
+                    <h3 style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 0.75rem;">Troubleshooting
+                    </h3>
+
                     <div class="troubleshoot-item">
                         <strong>Connection refused?</strong>
                         <p>Ensure the noVNC service is running and port 6443 is open</p>
                     </div>
-                    
+
                     <div class="troubleshoot-item">
                         <strong>Certificate error?</strong>
                         <p>First visit https://[server]:6443 directly to accept the cert</p>
                     </div>
-                    
+
                     <div class="troubleshoot-item">
                         <strong>Black screen?</strong>
                         <p>The desktop environment may need a moment to start</p>
@@ -479,30 +516,31 @@
         </div>
 
         <footer>
-            <p>Powered by <a href="https://novnc.com" target="_blank">noVNC</a> • 
-            <a href="docs/SECURITY.md">Security Documentation</a> • 
-            <a href="docs/PORT_FORWARDING.md">Router Setup</a></p>
+            <p>Powered by <a href="https://novnc.com" target="_blank">noVNC</a> •
+                <a href="docs/SECURITY.md">Security Documentation</a> •
+                <a href="docs/PORT_FORWARDING.md">Router Setup</a>
+            </p>
         </footer>
     </div>
 
     <script>
-        document.getElementById('connectForm').addEventListener('submit', function(e) {
+        document.getElementById('connectForm').addEventListener('submit', function (e) {
             e.preventDefault();
-            
+
             const host = document.getElementById('host').value.trim();
             const port = document.getElementById('port').value.trim();
-            
+
             if (!host) {
                 alert('Please enter a server address');
                 return;
             }
-            
+
             // Construct the noVNC URL
             const vncUrl = `app/vnc.html?host=${encodeURIComponent(host)}&port=${encodeURIComponent(port)}&autoconnect=true&encrypt=true`;
-            
+
             // First, try to open the certificate acceptance page
             const certWindow = window.open(`https://${host}:${port}`, '_blank');
-            
+
             // After a delay, navigate to VNC
             setTimeout(() => {
                 window.location.href = vncUrl;
@@ -517,6 +555,55 @@
         if (urlParams.get('port')) {
             document.getElementById('port').value = urlParams.get('port');
         }
+
+        // Audio streaming functionality
+        let audioPlaying = false;
+
+        function toggleAudio() {
+            const host = document.getElementById('host').value.trim();
+            const audioPlayer = document.getElementById('audioPlayer');
+            const audioBtn = document.getElementById('audioBtn');
+            const audioText = document.getElementById('audioText');
+            const audioIcon = document.getElementById('audioIcon');
+
+            if (!host) {
+                alert('Please enter a server address first');
+                return;
+            }
+
+            if (!audioPlaying) {
+                // Start audio - Note: Due to browser security, HTTP audio from HTTPS pages may be blocked
+                // User needs to accept the audio stream certificate first
+                const audioUrl = `https://${host}:6444`;
+
+                // Open certificate acceptance for audio port
+                window.open(audioUrl, '_blank', 'width=400,height=300');
+
+                alert('Please accept the certificate for the audio stream in the popup window, then click Start Audio again.');
+
+                // Try to play after user accepts cert
+                audioPlayer.src = audioUrl;
+                audioPlayer.play().then(() => {
+                    audioPlaying = true;
+                    audioText.textContent = 'Stop Audio';
+                    audioIcon.innerHTML = '<rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect>';
+                    audioBtn.style.background = 'var(--accent-primary)';
+                    audioBtn.style.color = 'white';
+                }).catch(err => {
+                    console.log('Audio playback requires user interaction or cert acceptance:', err);
+                });
+            } else {
+                // Stop audio
+                audioPlayer.pause();
+                audioPlayer.src = '';
+                audioPlaying = false;
+                audioText.textContent = 'Start Audio';
+                audioIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
+                audioBtn.style.background = 'var(--bg-input)';
+                audioBtn.style.color = 'var(--text-primary)';
+            }
+        }
     </script>
 </body>
+
 </html>

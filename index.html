@@ -182,7 +182,8 @@
             margin-bottom: 0.5rem;
         }
 
-        input {
+        input,
+        select {
             width: 100%;
             padding: 0.875rem 1rem;
             background: var(--bg-input);
@@ -194,7 +195,8 @@
             transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
 
-        input:focus {
+        input:focus,
+        select:focus {
             outline: none;
             border-color: var(--accent-primary);
             box-shadow: 0 0 0 3px var(--accent-glow);
@@ -439,13 +441,23 @@
                     </div>
                     <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1rem;">Recommended: Full
                         remote desktop with native audio streaming via RDP</p>
+
+                    <div style="display: grid; grid-template-columns: 1fr 115px 130px; gap: 0.5rem; margin-bottom: 0.75rem;">
+                        <input id="guacPath" type="text" value="/guacamole/" placeholder="/guacamole/" aria-label="Guacamole path">
+                        <input id="guacPort" type="number" value="8080" placeholder="8080" aria-label="Guacamole port">
+                        <select id="guacProtocol" aria-label="Guacamole protocol">
+                            <option value="http" selected>http</option>
+                            <option value="https">https</option>
+                        </select>
+                    </div>
+
                     <button id="guacBtn" onclick="connectGuacamole()"
                         style="width: 100%; padding: 0.875rem; background: linear-gradient(135deg, #22c55e, #16a34a); border: none; border-radius: 10px; color: white; font-family: inherit; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: all 0.2s; box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);">
                         <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
                             <path
                                 d="M21 2H3a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h7v2H7v2h10v-2h-3v-2h7a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1zM4 4h16v12H4V4z" />
                         </svg>
-                        Connect with Audio (Guacamole)
+                        Open Guacamole (Audio)
                     </button>
                 </div>
 
@@ -522,6 +534,11 @@
                     <div class="troubleshoot-item">
                         <strong>Connection refused?</strong>
                         <p>Ensure the noVNC service is running and port 6443 is open</p>
+                    </div>
+
+                    <div class="troubleshoot-item">
+                        <strong>Guacamole not opening?</strong>
+                        <p>For Docker installs, use http + port 8080 + path /guacamole/ (or adjust to your setup)</p>
                     </div>
 
                     <div class="troubleshoot-item">
@@ -628,18 +645,59 @@
 
         // Guacamole connection function
         function connectGuacamole() {
-            const host = document.getElementById('host').value.trim();
+            const hostInput = document.getElementById('host').value.trim();
+            const protocolSelect = document.getElementById('guacProtocol');
+            const portInput = document.getElementById('guacPort');
+            const pathInput = document.getElementById('guacPath');
 
-            if (!host) {
+            if (!hostInput) {
                 alert('Please enter a server address first');
                 return;
             }
 
-            // Guacamole runs on port 8443 through Tomcat
-            const guacUrl = `http://${host}:8443/guacamole`;
+            let protocol = (protocolSelect.value || 'http').toLowerCase();
+            let host = hostInput;
+            let port = (portInput.value || '').trim();
+            let path = (pathInput.value || '/guacamole/').trim();
 
-            // Open Guacamole in new tab
-            window.open(guacUrl, '_blank');
+            // Allow users to paste full URLs in the host field.
+            if (/^https?:\/\//i.test(host)) {
+                try {
+                    const parsed = new URL(host);
+                    host = parsed.hostname;
+                    if (!port && parsed.port) {
+                        port = parsed.port;
+                    }
+                    protocol = parsed.protocol.replace(':', '') || protocol;
+                } catch (err) {
+                    console.warn('Could not parse host URL:', err);
+                }
+            }
+
+            // If user typed host:port directly, split it unless it's bracketed IPv6.
+            if (!host.startsWith('[') && host.includes(':')) {
+                const parts = host.split(':');
+                if (parts.length === 2 && /^\d+$/.test(parts[1])) {
+                    if (!port) {
+                        port = parts[1];
+                    }
+                    host = parts[0];
+                }
+            }
+
+            if (!port) {
+                port = protocol === 'https' ? '8443' : '8080';
+            }
+
+            if (!path.startsWith('/')) {
+                path = `/${path}`;
+            }
+            if (!path.endsWith('/')) {
+                path = `${path}/`;
+            }
+
+            const guacUrl = `${protocol}://${host}:${port}${path}`;
+            window.open(guacUrl, '_blank', 'noopener,noreferrer');
         }
     </script>
 </body>

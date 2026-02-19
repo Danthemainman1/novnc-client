@@ -1,13 +1,15 @@
-# noVNC Remote Desktop Client
+# noVNC + Guacamole Remote Desktop Client
 
-Secure, web-based remote desktop access using noVNC with SSL/TLS encryption.
+Secure, web-based remote desktop access using noVNC and Apache Guacamole.
 
 ## 🚀 Quick Start
 
 1. **Enter your server address** (IP or hostname)
-2. **Click "Connect to Desktop"**
-3. **Accept the certificate warning** (first time only)
-4. **Enter your VNC password**
+2. **Choose your connection path:**
+   - **noVNC** (default port `6443`)
+   - **Guacamole** (default Docker setup: `http`, port `8080`, path `/guacamole/`)
+3. **Open the remote desktop**
+4. **Accept certificate warnings when prompted** (first time only)
 
 ## 🔒 Security Features
 

@@ -586,13 +586,28 @@
             }, 1000);
         });
 
-        // Check if coming back from cert acceptance
+        // URL parameters
         const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('host')) {
-            document.getElementById('host').value = urlParams.get('host');
+        const hostParam = urlParams.get('host');
+        const portParam = urlParams.get('port');
+        const guacProtocolParam = urlParams.get('guacProtocol') || urlParams.get('protocol');
+        const guacPortParam = urlParams.get('guacPort');
+        const guacPathParam = urlParams.get('guacPath');
+
+        if (hostParam) {
+            document.getElementById('host').value = hostParam;
         }
-        if (urlParams.get('port')) {
-            document.getElementById('port').value = urlParams.get('port');
+        if (portParam) {
+            document.getElementById('port').value = portParam;
+        }
+        if (guacProtocolParam) {
+            document.getElementById('guacProtocol').value = guacProtocolParam.toLowerCase();
+        }
+        if (guacPortParam) {
+            document.getElementById('guacPort').value = guacPortParam;
+        }
+        if (guacPathParam) {
+            document.getElementById('guacPath').value = guacPathParam;
         }
 
         // Audio streaming functionality
@@ -643,16 +658,18 @@
             }
         }
 
-        // Guacamole connection function
-        function connectGuacamole() {
+        // Guacamole URL builder
+        function buildGuacamoleUrl(showAlert = true) {
             const hostInput = document.getElementById('host').value.trim();
             const protocolSelect = document.getElementById('guacProtocol');
             const portInput = document.getElementById('guacPort');
             const pathInput = document.getElementById('guacPath');
 
             if (!hostInput) {
-                alert('Please enter a server address first');
-                return;
+                if (showAlert) {
+                    alert('Please enter a server address first');
+                }
+                return null;
             }
 
             let protocol = (protocolSelect.value || 'http').toLowerCase();
@@ -686,7 +703,7 @@
             }
 
             if (!port) {
-                port = protocol === 'https' ? '8443' : '8080';
+                port = protocol === 'https' ? '443' : '8080';
             }
 
             if (!path.startsWith('/')) {
@@ -696,8 +713,27 @@
                 path = `${path}/`;
             }
 
-            const guacUrl = `${protocol}://${host}:${port}${path}`;
+            return `${protocol}://${host}:${port}${path}`;
+        }
+
+        // Guacamole connection function
+        function connectGuacamole() {
+            const guacUrl = buildGuacamoleUrl(true);
+            if (!guacUrl) {
+                return;
+            }
             window.open(guacUrl, '_blank', 'noopener,noreferrer');
+        }
+
+        // Optional deep-link mode: auto-open Guacamole from URL params.
+        const modeParam = (urlParams.get('mode') || urlParams.get('target') || '').toLowerCase();
+        if (modeParam === 'guac' || modeParam === 'guacamole') {
+            setTimeout(() => {
+                const guacUrl = buildGuacamoleUrl(false);
+                if (guacUrl) {
+                    window.location.href = guacUrl;
+                }
+            }, 150);
         }
     </script>
 </body>
